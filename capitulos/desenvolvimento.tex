@@ -1,369 +1,210 @@
-\chapter{Medotologia e Resultados}\label{cap:CnptDsng}
-\section{Desenvolvimento do código Arduino RTU}
-O programa realiza a conversão de valores decimais em binários, lê o status de um botão e o valor de um potenciômetro somado com um setpoint. 
+\chapter{Estudos preliminares para a implantação de uma PCH}\label{cap:CnptDsng}
+Os estudos preliminares representam todos os estudos que são feitos antes da implementação de uma PCH.
+\section{Estudos Topográficos}
+São feitas levantamentos topográficos da região, sendo elas: o estudo para determinação a queda natural do local, estudo das áreas de implantação das estruturas, local para empréstimo de solo, nivelamento a linha d'água do reservatório e cadastro jurídico das propriedades, todas de acordo com a norma a ABNT NBR 13133.
+\section{Estudo de Inventário}
+O estudo de inventário se dá pelo estudo de todo potencial do rio, afim de achar o lugar mais propício para instalação da  PCH. Não sendo considerado somente o potencial hidráulico mas também os possíveis impactos da construção.
 
-Para aplicação do modo de transmissão MODBUS RTU no Arduíno, foi utilizada a biblioteca \verb|“SimpleModbusSlave.h”|, onde o arduino foi configurado como escravo, sendo assim, o computador o mestre.
+\section{Estudos Geológicos e Geotécnicos}
+Têm o objetivo de investigar as condições das fundações da obra, buscando também áreas para recursos de construção, jazidas de minerais e também determinando locais para instalações de obra como o canteiro.
 
-A função \verb|modbus_configure| é responsável pela configuração dos parâmetros da comunicação, foram escolhidos os valores de baud-rate sendo iguais a 9600, o formato de dados como \verb|SERIAL_N2|, que equivale ao tamanho da palavra de dados, e o endereço do arduino como sendo 1.
+\section{Estudos Ambientais}
+Os impactos ambientais envolve toda parte dos efeitos da inundação e da construção a natureza, o primeiro passo é a realização de um relatório ambiental preliminar - RAP e deve ser entregue para o órgão ambiental responsável. 
+O documento deve conter os seguintes tópicos: Justificativas do empreendimento, caracterização do empreendimento, com os dados da usina e reservatório, diagnóstico ambiental preliminar, com os principais aspectos físicos, bióticos e antrópicos a região já levantados, identificação preliminar dos impactos, prováveis medidas mitigadoras e programas ambientais.
+No final, ao ser aprovado o RAP, obtém-se a Licença Prévia - LP que é a autorização para iniciar a construção da obra a usina.
 
-O Arduíno se comunica com o usuário por meio da interface gráfica, dessa forma as variáveis de entrada do programa são o valor para ser convertido em binário, um \textit{setpoint} para ser adicionado ao valor do potenciômetro lido e o sinal de botão pressionado, proveniente de um botão físico. 
+\chapter{Escolha do local para implantação da PCH}
+\section{Método de Seleção}
+Além do estudo preliminar do rio, é necessário analisar 3 itens para saber a viabilidade a construção da PCH, são elas: recursos hídricos, queda d'água e linha de transmissão próxima. Não adianta possuir um rio com ótimo potencial hidrelétrico se não tiver uma linha de transmissão para transportar essa energia, que possui um grande custo de instalação.
 
-O programa possui 3 saídas: o valor do número decimal convertido para binário e mostrado num sistema físico de 3 leds; o mesmo valor já convertido para binário mostrado também na interface gráfica e o valor lido pelo potenciômetro mais o \textit{setpoint} informado.O programa está mostrado à seguir:
-
-
-\begin{lstlisting}[language=Arduino]
-#include <SimpleModbusSlave.h>
-
-int LED1 = 8; //Definicao das portas dos LEDs
-int LED2 = 6;
-int LED3 = 4;
-int botao = 2;
-
-
-
-enum //Enumera as variaveis  que serao utilizadas para comunicacao com o Elipse E3
-{
-BINARIO, // recebe o valor em decimal para ser convertido em binario
-LED_1, 
-LED_2, 
-LED_3,
-POTENCIOMETRO, //Recebe o valor do sensor LDR; primeiro componente que o E3 ira \"reconhecer\"(N4 = 01)
-SETPOINT, //Recebe o valor decimal; (N4 = 02)
-SETPOT,
-BOTAO,  
-HOLDING_REGS_SIZE //Identifica a quantidade de holdingRegs que estao sendo utilizados no programa.
-};
-
-unsigned int holdingRegs[HOLDING_REGS_SIZE]; //Variavel criada para manipulacao dos registradores que foram criados. 
-
-int num = 0;
-int setpoint;
-
-void setup() {
-
-modbus_configure(&Serial, 9600, SERIAL_8N2, 1, 2, HOLDING_REGS_SIZE, holdingRegs); //Determina os parametros necessarios para estabelecer a conexao via comunicacao serial utilizando MODBUS.
-//9600 = velocidade da transmissao dos dados; SERIAL_8N2 = formato do pacote utilizado no MODBUS; 1 = identificacao do escravo.
-
-modbus_update_comms(9600, SERIAL_8N2, 1); //Funcao tambem responsavel pela comunicacao via MODBUS; 
-
-pinMode (LED1, OUTPUT); //Modos de operacao dos LEDs (saida)
-pinMode (LED2, OUTPUT);
-pinMode (LED3, OUTPUT);
-pinMode (botao, INPUT);
-}
-
-
-void loop() {
-
-modbus_update(); // Funcao utilizada para a atulizacao dos valores dos registradores declarados (V_LDR, V_LED...)
-
-holdingRegs[POTENCIOMETRO] = analogRead(A0); //Le-se a informacao presente na porta analogica A0 (Sensor LDR)
-setpoint = holdingRegs[SETPOINT];
-holdingRegs[SETPOT] = setpoint + analogRead(A0);
-holdingRegs[BOTAO] = digitalRead(botao);
-
-switch(holdingRegs[BINARIO]) {
-case 0:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, LOW);
-holdingRegs[LED_1] = 0;
-holdingRegs[LED_2] = 0;
-holdingRegs[LED_3] = 0;
-break;
-case 1:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, LOW);
-holdingRegs[LED_1] = 1;
-holdingRegs[LED_2] = 0;
-holdingRegs[LED_3] = 0;
-break;
-case 2:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, LOW);
-holdingRegs[LED_1] = 0;
-holdingRegs[LED_2] = 1;
-holdingRegs[LED_3] = 0;
-break;
-case 3:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, LOW);
-holdingRegs[LED_1] = 1;
-holdingRegs[LED_2] = 1;
-holdingRegs[LED_3] = 0;
-break;
-case 4:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, HIGH);
-holdingRegs[LED_1] = 0;
-holdingRegs[LED_2] = 0;
-holdingRegs[LED_3] = 1;
-break;
-case 5:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, HIGH);
-holdingRegs[LED_1] = 1;
-holdingRegs[LED_2] = 0;
-holdingRegs[LED_3] = 1;
-break;
-case 6:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, HIGH);
-holdingRegs[LED_1] = 0;
-holdingRegs[LED_2] = 1;
-holdingRegs[LED_3] = 1;
-break; 
-case 7:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, HIGH);
-holdingRegs[LED_1] = 1;
-holdingRegs[LED_2] = 1;
-holdingRegs[LED_3] = 1;
-break;
-}
-}
-\end{lstlisting}
-
-\section{Desenvolvimento do código Arduino TCP}
-Assim como o código anterior,este programa realiza a conversão de valores decimais em binários, lê o status de um botão e o valor de um potenciômetro somado com um \textit{setpoint}, a comunicação entre o Arduíno e Elipse é feita por meio do protocolo TCP.
-Para aplicação do modo de transmissão MODBUS TCP no arduino, foram utilizada as bibliotecas \verb|“SPI.h “|, \verb|“Ethernet.h”| e \verb|"Mudbus.h"|.
-
-A biblioteca \verb|“SPI.h”| é responsável pela comunicação serial entre o \textit{shield} Ethernet e Arduíno, a biblioteca \verb|“Ethernet.h”| realiza a configuração dos parâmetros de ethernet e pela conectividade a rede e a biblioteca \verb|“Mudbus.h”| configura protocolo modbus da comunicação. Para a comunicação o arduino foi configurado como servidor, recebendo as requisições do computador, que funciona como cliente.
-
-A função \verb|Ethernet.begin| é responsável pela configuração dos parâmetros a comunicação, foram escolhidos os valores de IP sendo igual $192.168.1.1$, o gateway igual a $192.168.1.1$ e endereço de subrede de $255.255.255.0$.
-
-O programa está ilustrado a seguir, apresentando as mesmas entradas e saídas do anterior.
-\begin{lstlisting}[language=Arduino]
-#include <SPI.h> 
-#include <Ethernet.h>
-#include \"Mudbus.h\"
-
-Mudbus Mb;
-//Function codes 1(read coils), 3(read registers), 5(write coil), 6(write register)
-//signed int Mb.R[0 to 125] and bool Mb.C[0 to 128] MB_N_R MB_N_C
-//Port 502 (defined in Mudbus.h) MB_PORT
-
-int botao = 8;
-int LED1 = 7; //Definicao das portas dos LEDs
-int LED2 = 6;
-int LED3 = 5;
-int setpoint;
-
-
-void setup(){
-uint8_t mac[]     = { 0x90, 0xA2, 0xDA, 0x00, 0x51, 0x06 };
-uint8_t ip[]      = { 192, 168, 1, 10 };
-uint8_t gateway[] = { 192, 168, 1, 1 };
-uint8_t subnet[]  = { 255, 255, 255, 0 };
-Ethernet.begin(mac, ip,gateway, subnet);
-//With the last update of Industrial Shields boards it\'s not necessary to use function pinMode() 
-
-
-pinMode (LED1, OUTPUT); //Modos de operacao dos LEDs (saida)
-pinMode (LED2, OUTPUT);
-pinMode (LED3, OUTPUT);
-pinMode (botao, INPUT);
-}
-
-void loop(){
-Mb.Run(); //Update the values of Mb.R and Mb.C every loop cycle
-
-switch(Mb.R[0]) {
-case 0:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, LOW);
-Mb.R[1] = 0;
-Mb.R[2] = 0;
-Mb.R[3] = 0;
-break;
-case 1:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, LOW);
-Mb.R[1] = 1;
-Mb.R[2] = 0;
-Mb.R[3] = 0;
-break;
-case 2:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, LOW);
-Mb.R[1] = 0;
-Mb.R[2] = 1;
-Mb.R[3] = 0;
-break;
-case 3:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, LOW);
-Mb.R[1] = 1;
-Mb.R[2] = 1;
-Mb.R[3] = 0;
-break;
-case 4:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, HIGH);
-Mb.R[1] = 0;
-Mb.R[2] = 0;
-Mb.R[3] = 1;
-break;
-case 5:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, LOW);
-digitalWrite(LED3, HIGH);
-Mb.R[1] = 1;
-Mb.R[2] = 0;
-Mb.R[3] = 1;
-break;
-case 6:
-digitalWrite(LED1, LOW);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, HIGH);
-Mb.R[1] = 0;
-Mb.R[2] = 1;
-Mb.R[3] = 1;
-break; 
-case 7:
-digitalWrite(LED1, HIGH);
-digitalWrite(LED2, HIGH);
-digitalWrite(LED3, HIGH);
-Mb.R[1] = 1;
-Mb.R[2] = 1;
-Mb.R[3] = 1;
-break;
-}
-
-
-Mb.R[4] = analogRead(A0);
-setpoint = Mb.R[5];
-
-Mb.R[6] = Mb.R[4] + setpoint;
-
-//  if( digitalRead(botao)){
-//
-//    Mb.R[7] = 1;
-//  }
-//  else{
-//    Mb.R[7] = 0;
-//  }
-Mb.R[7] = digitalRead(botao);
-}
-\end{lstlisting}
-\section{Configuração do computador}
-Para comunicar o computador e o Arduíno via Ethernet é preciso criar uma rede local entre eles, como mostrado anteriormente, o Arduíno foi configurado para um IP de $192.168.1.10$ e sub-máscara de 255.255.255.00, o rede do computador foi configurado com o IP $192.168.1.23$ com máscara $255.255.255$.0 o mesmo estara na mesma rede com o Arduíno e assim podendo trocar informações.
-\begin{figure}[H]
+\section{Rio Itanhém}
+O rio escolhido foi o Rio Itanhém, que nasce na aldeia dos Machacalis no município de Fronteira dos Vales ,estado de Minas Gerais e corre de oeste para leste até a foz em Alcobaça na Bahia, onde deságua no Oceano Atlântico.Sua escolha se deu ao fato de que não possui até o momento nenhuma PCH instalada e possui vários municípios próximo como: Teixeira de Freitas, St. Antonio de Barcelona, Nova Lídice e São José de Alcobaça que poderão desfrutar e até mesmo ser alvo de investimento futuramente.
+O rio possui grande potencial hidrelétrico possuindo em média uma vazão de $35m^3/s$ sem muita variação durante o dia. Na imagem \ref{fig:vazao} descreve a vazão durante o ano:
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth]{configTCP-PC.PNG}
-	\caption{Configuração do computador para comunicação TCP}
-	\label{fig:tcp_config1}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-\section{Comunicação Elipse/Arduino utilizando o modo RTU}
-Para realizar a comunicação entre o elipse e o arduino foi necessário o uso de um \textit{Driver} para as duas aplicações,no modo RTU e TCP. Ao abrir a janela de configuração do Driver RTU, foram adicionados duas funções contendo como mostra na figura \ref{fig:rtu_config1}, foi selecionado tambem que o Modbus mode seria RTU. 
-Na aba \textit{setup}, ilustrado na figura \ref{fig:rtu_config2}, foi selecionado a camada física “Serial” e o restante Default. As etapa da configuração estão mostradas a seguir: 
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.6\textwidth]{configRTU.PNG}
-	\caption{Etapa 1 da configuração RTU}
-	\label{fig:rtu_config1}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=.6\textwidth]{vazao.png}
+	\caption{Distribuição a vazão ao ano do rio alcobaça}
+	\label{fig:vazao}
+	\source{[10]}
 \end{figure}
 
-\begin{figure}[H]
+\section{Área de Implantação da usina}
+Foi percorrida toda a excursão do rio e o melhor lugar possui as seguintes características: um corredor estreito que facilita a construção da barreira, queda natural de 5m, área vizinha já degradada, poupando de desmatamento, área de empréstimo de solo contendo areia e cascalho e nenhuma população por perto. O local está indicado na imagem \ref{fig:geral}, onde o círculo vermelho ilustra a área de inundação, o círculo branco a área com construções e a linha vermelha indica o local da Barragem:
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth]{configRTU2.PNG}
-	\caption{Etapa 2 da configuração RTU}
-	\label{fig:rtu_config2}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=.6\textwidth]{geral.png}
+	\caption{Mapa da área escolhida}
+	\label{fig:geral}
+	\source{Google Earth Pro}
+\end{figure}
+O local para a barragem está mostrado na figura \ref{fig:alta2}, assim como o perfil de relevo.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.6\textwidth]{barreira_alta2.png}
+	\caption{Mapa da área escolhida}
+	\label{fig:alta2}
+	\source{Google Earth Pro}
 \end{figure}
 
-Após selecionar a camada física Serial, a aba serial pode ser configurada. Nela é configurado a \textit{com port} referente a com na qual o Arduíno esta conectado, juntamente com a configuração de \textit{baud-rate} para 9600, data bits para 8, bit paridade “nenhum e o \textit{stop} bits para 1, como foi configurado no código Arduíno.
+\chapter{Especificações Técnicas}
+As especificações técnicas levaram em consideração os valores reais disponíveis para projeto, quando não encontrados, foram estipulados valores baseados em pesquisas e projetos semelhantes.
+\section{Barragem}
+A barragem é uma estrutura que tem a função de represar a água em uma determinada altura. Essa altura e a taxa na qual a água flui do reservatório através das turbinas determina quantidade de eletricidade que pode ser gerada. Isso pode ser calculado usando a equação de energia hidrelétrica. À medida que a altura da barragem aumenta a quantidade de eletricidade gerada também aumenta. No caso de hidrelétricas situadas em locais com baixa queda, a barragem tem também a função de criar o desnível necessário à produção da energia desejada. Atualmente no Brasil tem se adotados os seguintes tipos de barragem: de terra, enrocamento e concreto.
 
-\begin{figure}[H]
+Para o projeto foi escolhido uma barragem de terra, pois o local escolhido para construção da PCH apresenta uma topologia suave e vales pouco encaixados. Como o solo da região é tipicamente arenoso selecionamos uma seção trapezoidal conforme a imagem abaixo.
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth]{configRTU3.PNG}
-	\caption{Etapa 3 da configuração RTU}
-	\label{fig:rtu_config3}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-
-\section{Comunicação Elipse/Arduino utilizando o modo TCP}
-O driver TCP foi configurado de forma parecida ao modo RTU, na aba Modbus única diferença é o modo modbus para \verb|“modubus TCP”|, como mostra a figura \ref{fig:tcp_config1}:
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.6\textwidth]{configTCP1.PNG}
-	\caption{Etapa 1 da configuração TCP}
-	\label{fig:tcp_config1}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-Na aba “setup”, a camada fisica foi selecionada “ethernet”,como mostra a figura \ref{fig:tcp_config2}:
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.6\textwidth]{configTCP2.PNG}
-	\caption{Etapa 2 da configuração TCP}
-	\label{fig:tcp_config2}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-Na aba \verb|“ethernet”|, no campo \verb|“transport”| foi escolhdio TCP/IP, nos campo IP e \textit{port} foram colocados os mesmos valores configurados no arduino.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.6\textwidth]{configTCP3.PNG}
-	\caption{Etapa 3 da configuração TCP}
-	\label{fig:tcp_config3}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-\section{Configuração das \textit{tags} no Elipse}
-Para cada driver, a configuração das tags de comunicação se diferenciou pelo os IDs de cada variável que é representado nas figuras à seguir como a coluna $P4$. A coluna $P1$ representa a configuração do escravo que participará da comunicação,onde na comunicação com o arduino, se adotou o valor de $P1= 1$. $P2$ mostra a função utilizada na configuração do driver, $P3$ indica a utilização de memória estendida. Foi utilizada a função 1 de HoldingRegs, assim $P2= 1$ e não se utilizará a memória extendida, assim $P3 =0$.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{configRTU0.PNG}
-	\caption{Driver RTU}
-	\label{fig:driver_rtu}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=1\textwidth]{barra_homo.png}
+	\caption{Projeto de barragem Homogênea}
+	\label{fig:barra_homo}
+	\source{Manual da Eletrobrás}
 \end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{configTCP0.PNG}
-	\caption{Driver TCP}
-	\label{fig:driver_tcp}
-	%\source{Fornecido junto com os pontos}
-\end{figure}
-\section{Interface Gráfica}
-A interface gráfica recebe o número para ser convertido em binário e o \textit{offset}
- que será adicionado ao valor do potenciômetro. Cada campo foi relacionado com as \textit{tags} de comunicação do driver mostradas anteriormente, buscou-se desenvolver uma interface simples, os \textit{screenshots} estão mostrados à seguir:
+A largura da base da barragem é dimensionada conforme a equação de número 1. Onde a largura da crista ($a$) deverá ser de pelo menos 3 metros, a altura da barragem é dada por (H), a inclinação do talude de montante ($m_1$) e a inclinação de jusante ($m_2$) são definidas pela tabela 1.
+\begin{equation}
+	b = a + (m_1 + m_2)*H
+\end{equation}
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth]{telainterface1.PNG}
-	\caption{Tela de seleção do modo de comunicação}
-	\label{fig:tela1}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=.8\textwidth]{tab_solos.png}
+	\caption{Tabela para projeto da barragem}
+	\label{fig:tab_solos}
+	\source{Manual da Eletrobrás}
 \end{figure}
-\begin{figure}[H]
+Aplicando o cálculo no nosso projeto definindo a altura da crista como 3 metros e a altura da barragem como 10 metros obtém-se o se valor de comprimento:
+\begin{equation}
+b = 55,5 m
+\end{equation}
+
+\section{Vertedouros}
+Vertedouro é uma estrutura que permite o controle do nível da água de um reservatório, principalmente em períodos de cheias.  O vertedouro é uma das partes mais importante de uma usina hidrelétrica, pois se houver muita água passando pela barragem, elementos como as turbinas não podem funcionar adequadamente e podem ser danificados. Os vertedouros protegem essas outras partes de danos ou complicações.
+
+Todo reservatório hidrelétrico tem certa capacidade ou quantidade de água que pode conter. Se o reservatório já estiver cheio, mas as águas da enchente entrarem no reservatório, o nível da água aumentará e isso poderá resultar na sobreposição da barragem. Os vertedouros são construídos para evitar isso, pois permitem que seja extraído um pouco de água do topo do reservatório para dar espaço à nova água. Quando um reservatório está cheio, seu nível de água será igual à altura do vertedouro. Assim que qualquer excesso de água entrar no reservatório, a água começará imediatamente a fluir através do vertedouro.
+
+Para dimensionar a largura de um vertedouro em canal, com seção trapezoidal mostrado a figura \ref{fig:vertedouro}, deverá ser levada em conta a vazão máxima de projeto ($Q_{max}$), a inclinação dos taludes ($m$), a lâmina d’água máxima ($h_{max}$), a velocidade máxima admissível no canal ($V_{max}$).
+
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.5\textwidth]{telainterface2.PNG}
-	\caption{Tela comunicação TCP}
-	\label{fig:tela_tcp}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=.8\textwidth]{vertedouro.png}
+	\caption{Desenho técnico do vertedouro}
+	\label{fig:vertedouro}
+	\source{Manual da Eletrobrás}
 \end{figure}
-\begin{figure}[H]
+
+\begin{equation}
+b = \dfrac{Q_{max}-V_{max}mh^2_{max}}{V_{max}Q_{max}}
+\end{equation}
+
+Escolhendo um vertedouro com taludes de argila dura, temos um $m=0,75$, considerando a velocidade máxima de $1,7m/s$ e uma altura de $1m$. É obtido um valor de :
+\begin{equation}
+	b=19,83
+\end{equation}
+
+\section{Chaminé de Equilíbrio}
+A chaminé de equilíbrio é uma espécie de reservatório com eixo vertical, normalmente posicionado no final da tubulação de adução de baixa pressão e a montante do conduto forçado.  Ele é usando para amortecer as variações de pressão que se propagam pelo conduto forçado e armazenar água para fornecer ao conduto forçado o fluxo inicial provocado pela nova abertura da turbina, até que se estabeleça o regime contínuo. Quando necessário, a chaminé de equilíbrio deve ser instalada o mais próximo possível da casa de força, para reduzir o comprimento do conduto forçado e diminuir os efeitos do golpe de aríete.
+
+A verificação dessa necessidade é feito pelo cálculo do critério da constante de aceleração do escoamento no conduto forçado como mostrado abaixo.
+\begin{equation}
+t_h = \dfrac{V_{cf}L_{cf}}{gH_b}
+\end{equation}
+th=VcfLcfgHb
+Onde $L_{cf}$ é o comprimento do conduto forçado,Hba queda bruta e vcf a velocidade de escoamento no conduto forçado. Para $t_h < 3$ não há a necessidade de instalação da chaminé. Entre $3$ e $6$ é desejável mas não obrigatória. Para $t_h> 6$  é obrigatória a instalação da chaminé.
+
+A instalação de uma válvula de alívio na entrada, ou na caixa espiral da turbina, pode evitar a necessidade da chaminé. No entanto, essa solução deve ser analisada criteriosamente, considerando a segurança que deve haver na abertura da mesma, em caso de fechamento rápido do distribuidor.
+
+\section{Conduto Forçado}
+Conduto forçado é definido como uma tubulação de grande diâmetro, podendo ser composto de aço, concreto, fibra de vidro e PVC. São projetados para tolerar altas tensões por causa da pressão estática da coluna d’água e também por causa do golpe de aríete criado pelas mudanças bruscas no fluxo d’água, e pode ser realizado pelo fechamento e aberturas de válvulas e/ou distribuidor da turbina.
+
+O conduto forçado pode ser projetado para ficar exposto ou enterrado. Se for exposto deve ser fundido em berços de concreto ou pedra. Vai depender da topografia da propriedade para delimitar o número de condutos, pode-se ter um conduto para cada máquina hidráulica ou ainda um com diâmetro maior que se ramifica em outros criando uma bifurcação de diâmetros menores de acordo com o número de máquinas.
+O diâmetro da tubulação é definido através do cálculo de diâmetro econômico pela fórmula de Bondshu.
+\begin{equation}
+	D_e = 127\sqrt[7]{\dfrac{Q^3}{H_b}}
+\end{equation}
+Onde $H_b$ é a queda bruta, $Q$ a descarga máxima na tubulação e $D_e$ o diâmetro econômico. Depois de feito esse cálculo deve-se verificar se a velocidade máxima admissível de acordo com a fórmula abaixo e para cada material está conforme a tabela 3.
+\begin{equation}
+	V_{adm} = \dfrac{4Q}{nD^2_e}
+\end{equation}
+
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.5\textwidth]{telainterface3.PNG}
-	\caption{Tela comunicação RTU}
-	\label{fig:tela_rtu}
-	%\source{Fornecido junto com os pontos}
+	\includegraphics[width=.6\textwidth]{tab_conduto.png}
+	\caption{Desenho técnico do vertedouro}
+	\label{fig:tab_conduto}
+	\source{Manual da Eletrobrás}
 \end{figure}
- 
+
+Adotando um Conduto forçado de concreto com uma descarga máxima de $1 m^3/s$ e uma queda bruta de $15m$. Obtém um valor de $D_{e}=84,01$ cm e $V=1,8$ m/s, a velocidade encontrada é aceitável, pois ela é inferior à máxima permitida.
+
+\section{Tomada D'agua} 
+A tomada d’água é responsável pela captação de água para fazer a turbinar gerar energia. A estrutura de tomada d’água deve ser localizada, sempre que possível, junto à margem do reservatório, ao longo de trechos retos. Nos trechos em curva, a tomada d’água deve ser posicionada do lado côncavo, pois os sedimentos transportados pelo escoamento, na maior parte, se depositam na parte convexa. Ela é composta por três componentes essenciais: grade de proteção, comporta e tubo de aeração.
+A função da grade de proteção é evitar a entrada de detritos, folhas e lixo para evitar danos nas turbinas. Normalmente, ela é uma tela composta por várias barras de aço paralelas, preferencialmente na vertical, localizada na entrada da tomada de água.
+
+\section{Casa de força}
+A casa de força é o lugar onde se encontra as turbinas e os geradores. É essencial a existência de uma sala de controle dentro da casa de força, pois é onde os engenheiros podem regular as válvulas controlando o fluxo de água nas turbinas ou monitorar o desempenho de cada unidade até a rede elétrica principal. É calculada a sua dimensão baseada no tamanho necessário para armazenar todos os itens do seu inventário, essa perspectiva não foi abordada no projeto.
+
+\section{Subestação}
+A subestação será do tipo Conjunto de manobra e controle blindado, conforme definido pela norma ABNT NBR 6979, esse tipo de subestação proporciona melhores condições de segurança pessoal contra riscos de acidentes e maior rapidez na fase de instalação do equipamento na usina.
+
+Devido que a PCH trabalhará em sistema isolado, a utilização de relés de sobrecorrente com características de tempo inverso associados a relés de sobrecorrente instantâneos é uma solução economicamente interessante.
+
+Os elementos utilizados seguiram a suas respectivas normas no seu projetos, podemos citar: disjuntores, com a norma NBR 7118, Seccionadores, com a norma NBR 6935,para-raios, a norma NBR 5287 e IEC 99-4, transformadores de potencial indutivo, a norma NBR 6856, transformador de corrente , a norma NBR 6855, assim garantindo um sistema com alta confiabilidade.
+
+\section{Turbina}
+Para atender as especificações do projeto, foi escolhida a turbina francis, devido a sua faixa de operação boa para baixas quedas. “No âmbito destas Diretrizes, a turbina Francis atende a quedas de 15 a 250 m e potências de 500 a 15000 kW possuindo ótimas características de desempenho sob cargas parciais de  até 70\% da carga nominal, funcionando ainda adequadamente entre 70 e 50\% da carga, embora com perda progressiva do rendimento. Não é aconselhável o funcionamento da turbina“(ELETROBRÁS,2000).
+
+Foram feitos os cálculos relativos à turbina, considerando uma potência desejada de 4500MW, sendo maior que a energia firme, assim sendo calculado uma velocidade de rotação de 181,79 rad/s, por meio da fórmula:
+
+\begin{equation}
+	n_{rot}= \dfrac{K*H^{0,75}_{liq}}{P_{turb}^{0,5}}
+	\end{equation}
+
+\section{Geradores}
+\subsection{Potência nominal}
+A potência nominal do gerador deve ser maior que a da turbina, a mesma foi calculada levando em consideração um fator de potência de 0,8 e um rendimento de 97\%, de acordo com a seguinte fórmula:
+\begin{equation}
+P_{gerador} = \dfrac{P_{turbina}*n_{gerador}}{fp}
+\end{equation}
+Sendo encontrado um valor de potência para o gerador de $P_{gerador} = 5456,25$.
+
+\subsection{Tensão de Geração}
+A escolha da tensão de geração deve considerar não só os custos do gerador, mas também os custos da interligação gerador–transformador e dos equipamentos ligados à tensão de geração. É desejável maior tensão de geração para diminuir as perdas de transmissão, contudo. de acordo com o manual de Diretrizes, a tensão economicamente atraente está relacionada com a potência do gerador, como mostra tabela a seguir:
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.6\textwidth]{tab_ger.png}
+	\caption{Tabela de tensão de geração econômicamente viável}
+	\label{fig:tab_ger}
+	\source{Manual da Eletrobrás}
+\end{figure}
+Como a potência encontrada foi maior que 5MVA a tensão do gerador será 6900V.
+
+\section{Transformador Elevador}
+Na casa de força será utilizado um transformador que eleva a tensão do gerador de 6900V para 13800V, para posteriormente essa energia passar por outro transformador elevador, que eleva a tensão de $13,8KV$ para $138KV$ pois esse é o valor utilizado para a transmissão na regiao.
+
+\section{Energia Firme e Potência Gerada ao ano}
+A energia firme se dá pela energia bruta gerada pela PCH, dependendo dos valores de altura de queda $H_queda$, vazão média $Q_méd$ e gravidade. No caso do rio alcobaça a vazão média de $35 m^3/s$ e queda livre de 15 metros, resultando em uma energia firme de:
+\begin{equation}
+	EF = 5150,25 KW
+\end{equation}
+
+Para o cálculo da potência gerada ao ano, se levou em consideração a energia firme disponível, multiplicada pelo rendimento do conjunto turbina-gerador, e foi considerado um rendimento mecânico, referente às perdas nos túneis, vertedouro e canal.Foi considerado um rendimento mecânico fictício de 70\% e rendimento do conjunto turbina-gerador de 90\%.
+\begin{equation}
+P = g *(H*. Q_{méd} * n_{gerador} *n_{mecânico})
+\end{equation}
+Sendo assim encontrado um valor de potência gerada de $3,174MW$, representando uma energia anual de $27483,624 KWh/Ano$
+\chapter{Estudo da viabilidade financeira}
+O estudo de custo foi feito de acordo com o custo de uma usina similar que será construída, sendo que os valores poderão mudar de acordo com a época do ano de construção. O valor total a usina foi de 98376740 reais, com o valor do MWh de 211 reais em aproximadamente 13 anos a PCH se pagará.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.6\textwidth]{custom.png}
+	\caption{Tabela de custos}
+	\label{fig:custo}
+	%\source{Manual da Eletrobrás}
+\end{figure}
+
+\chapter{Cronograma}
+O cronograma deve contemplar todas as etapas para a implantação de uma PCH. Foi tomado como base de tempo um projeto semelhante mas, vale ressaltar que a obra pode sofrer atrasos durante a sua implantação, devido a fatores externos. O cronograma relativo da obra está mostrado no Anexo A.
+
+\chapter{Conclusão}
+
 

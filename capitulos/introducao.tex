@@ -12,8 +12,6 @@ A perspectiva do aumento da demanda faz com que seja necessário um investimento
 
 Mesmo com o aumento do uso do potencial hídrico, é notável que há uma necessidade de diversificação da matriz energética, onde essa diversificação deve buscar a inserção de fontes renováveis. Pequenas Centrais Hidrelétricas representam se mostram uma alternativa muito viável, possibilitando uma geração próxima da carga, um impacto ambiental menor que as grandes usinas, além de um maior custo.
 
-
-
 \section{Objetivo}\label{sec:obj}
 Projetar uma PCH e realizar seu estudo de viabilidade.
 
@@ -27,45 +25,33 @@ Projetar uma PCH e realizar seu estudo de viabilidade.
 \item Avaliar o projeto técnico e financeiramente;
 
 \end{itemize}
+
 \section{Fundamentação teórica}
-Para realização do trabalho foram necessários os seguintes conhecimentos relativos à redes e comunicações.
-\subsection{Comunicação Serial}
-Comunicação serial é a nomenclatura atribuída ao processo da troca de dados de forma sequencial por meio de um canal ou barramento específico para comunicação . Tais dados são bytes de informação, transmitidos bit a bit, por meio de uma porta serial.	
+\subsection{Pequena Central Hidrelétrica}
+Segundo a Aneel, Pequenas Centrais Hidrelétricas (PCH) são os empreendimentos hidrelétricos com potência superior a $1.000 kW$ e igual ou inferior a $30.000 kW$ e com área total de reservatório igual ou inferior a $3,0 km^2$. As PChs são normalmente instaladas em rios que possuam desníveis significativos que possam gerar potência hidráulica suficiente para movimentar as turbinas. Por operarem normalmente a fio d’água e serem em geral instalações de menor porte ao comparar com as usinas hidrelétricas elas acabam resultando em um menor impacto ambiental.
 
-Os protocolos de comunicação serial representam o modo que a mensagem é transmitida, definindo a forma como os bytes serão ordenados de modo a garantir que a mensagem seja transmitida.
-O padrão de comunicação diz respeito à estrutura física da comunicação, fazendo referência aos padrões elétricos envolvidos e quantidade de vias utilizadas.
-\subsection{Protocolo MODBUS}
-O protocolo MODBUS O protocolo Modbus é uma estrutura de mensagem aberta desenvolvida pela Modicon na década de 70. De acordo com a MODBUS Organization o protocolo MODBUS É:  “É um protocolo de camada de aplicação posicionado no nível 7 do modelo OSI , que fornece comunicação cliente / servidor entre dispositivos conectados em diferentes tipos de barramentos ou redes”. 
-
-Consiste em um protocolo de solicitação/resposta , fornecendo serviços especificados por códigos de função. Os códigos de função de MODBUS são elementos das PDUs(Protocol Data Unit ou unidade de dados de protocolo) de solicitação / resposta de MODBUS.
-É largamente utilizado em automação industrial, sendo transmitido por protocolos físicos como o RS232/RS485 e Ethernet TCP/IP. 
-
-\subsubsection{Modo de transmissão RTU}
-RTU é a sigla para Remote Terminal Unit, nesse modo de transmissão cada mensagem de dados de 8 bits contém dois caracteres hexadecimais de 4 bits, isso faz com que o processamento de dados seja mais rápido se comparado com a transmissão por 2 caracteres Ascii de 4 bits, já que a densidade de caracteres é maior. Apresenta 8 bits disponíveis para o endereço, 8 para função, 0 a 252 bits de data e 16 bits para o CRC Check, como mostrado na figura \ref{fig:rtu_packet} a seguir:
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=.5\textwidth]{rtu_packet.png}
-	\caption{Pacote da comunicação RTU}
-	\label{fig:rtu_packet}
-	%\source{Fornecido junto com os pontos}
-\end{figure} 
-\subsubsection{Modo de transmissão TCP}
-O modo de transmissão TCP é uma aplicação do protocolo MODBUS baseado em TCP/IP, consequentemente utilizando a conexão ethernet. Para a pilha de comunicação, nesse protocolo é adicionado ao quadro um cabeçalho MBAP (MODBUS Application Protocol), deitando o modelo de mensagem como a figura \ref{fig:tcp_packet}:
+Conforme a Eletrobrás as PCHS são classificadas quanto sua capacidade de regularização por: a fio d’água, acumulação, com regulação mensal do reservatório ou acumulação com regulação diária do reservatório. Elas podem ser classificadas também quanto sua potência instalada quanto a queda do projeto, conforme mostra o quadro abaixo.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth]{tcp_packet.png}
-	\caption{Pacote da comunicação TCP}
+	\includegraphics[width=1\textwidth]{quadro_tipos.png}
+	\caption{Quadro de classificação dos tipos de PCH}
 	\label{fig:tcp_packet}
-	%\source{Fornecido junto com os pontos}
+	\source{Manual da Eletrobrás}
 \end{figure}
-Esse novo cabeçalho tem 7 bytes de tamanho sendo composto por os seguintes elementos:
-\begin{itemize}
-	\item Transaction identifier: usado para identificação da resposta para a transação (2 bytes);
-	\item Protocol identifier: 0 (zero) indica Modbus (2 bytes);
-	\item Length: contagem de todos os próximos bytes (2 bytes);
-	\item Unit identifier: utilizado para identificar o escravo remoto em uma rede Modbus RTU (1 byte).
-	
-\end{itemize}
 
-O Modbus  TCP nao utiliza um byte de checkagem ao final da mensagem, pois o pŕoprio frame ethernet já apresenta uma checagem do tipo CRC-32. Na comunicação o cliente Modbus TCP inicia a conexão com o servidor para enviar as requisições, onde a porta padrão para a conexão com os servidores é a TCP 502.
+\subsection{Tipos de PCH de acordo com a capacidade de regularização}
+\subsubsection{A fio d’água} 
+
+Tipo de PCH mais adequada para quando as vazões de estiagem do rio são maiores que a descarga necessária para potência a ser instalada para suprir a demanda.
+Esse tipo de projeto é mais simples, pois não requer estudos de regularização de vazões e estudos de sazonalidade de carga elétrica do consumidor.
+
+\subsubsection{Acumulação diaria com regularização diária do reservatório }
+
+PCH utilizada em situações onde as vazões de estiagem do rio são inferiores a necessária para fornecer a potência requerida, por isso é necessário a acumulação. Nesse caso, tem que haver um estudo de qual volume d’água precisa ser acumulado diariamente para suprir a demanda.
+
+\subsubsection{Acumulação diaria com regularização mensal do reservatório }
+
+Semelhante ao tipo de PCH anterior, porém com a diferença do tempo de regularização, oriundo do estudo prévio do rio, que fornece informações dos estudos mensais do rio, e não diário.
+
+Conhecendo os diferentes tipos de usina, pode-se analisar qual se adequa mais para o uso da a implementação do referido artigo, que no caso seria a PCH de acumulação diária com regularização diária do reservatório, pois os dados coletados do rio que vai ser apresentado posteriormente foram coletados com um espaço amostral diário.
