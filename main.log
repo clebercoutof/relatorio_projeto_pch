@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.8.7)  23 AUG 2018 03:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.8.7)  23 AUG 2018 11:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1663,7 +1663,7 @@ LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <12> not available
 
 
 ]
-<figs/quadro_tipos.png, id=56, 1039.885pt x 274.02374pt>
+<figs/quadro_tipos.png, id=58, 1039.885pt x 274.02374pt>
 File: figs/quadro_tipos.png Graphic file (type png)
 
 <use figs/quadro_tipos.png>
@@ -1678,19 +1678,19 @@ Package pdftex.def Info: figs/quadro_tipos.png used on input line 37.
 
 
 ]
-<figs/vazao.png, id=86, 830.10126pt x 456.70625pt>
+<figs/vazao.png, id=88, 830.10126pt x 456.70625pt>
 File: figs/vazao.png Graphic file (type png)
  <use figs/vazao.png>
 Package pdftex.def Info: figs/vazao.png used on input line 25.
 (pdftex.def)             Requested size: 273.00278pt x 150.19783pt.
 
-<figs/geral.png, id=88, 1129.97156pt x 727.96968pt>
+<figs/geral.png, id=90, 1129.97156pt x 727.96968pt>
 File: figs/geral.png Graphic file (type png)
  <use figs/geral.png>
 Package pdftex.def Info: figs/geral.png used on input line 35.
 (pdftex.def)             Requested size: 273.00278pt x 175.8715pt.
 
-<figs/barreira_alta2.png, id=90, 1126.96031pt x 732.48656pt>
+<figs/barreira_alta2.png, id=92, 1126.96031pt x 732.48656pt>
 File: figs/barreira_alta2.png Graphic file (type png)
 
 <use figs/barreira_alta2.png>
@@ -1699,7 +1699,7 @@ Package pdftex.def Info: figs/barreira_alta2.png used on input line 43.
  [6
 
  <./figs/vazao.png>] [7 <./figs/geral.png> <./figs/barreira_alta2.png>]
-<figs/barra_homo.png, id=103, 928.46875pt x 307.1475pt>
+<figs/barra_homo.png, id=105, 928.46875pt x 307.1475pt>
 File: figs/barra_homo.png Graphic file (type png)
 
 <use figs/barra_homo.png>
@@ -1708,14 +1708,14 @@ Package pdftex.def Info: figs/barra_homo.png used on input line 57.
  [8
 
  <./figs/barra_homo.png>]
-<figs/tab_solos.png, id=110, 571.13374pt x 258.9675pt>
+<figs/tab_solos.png, id=112, 571.13374pt x 258.9675pt>
 File: figs/tab_solos.png Graphic file (type png)
 
 <use figs/tab_solos.png>
 Package pdftex.def Info: figs/tab_solos.png used on input line 70.
 (pdftex.def)             Requested size: 364.00139pt x 165.0471pt.
 
-<figs/vertedouro.png, id=112, 488.82625pt x 187.70125pt>
+<figs/vertedouro.png, id=114, 488.82625pt x 187.70125pt>
 File: figs/vertedouro.png Graphic file (type png)
 
 <use figs/vertedouro.png>
@@ -1726,40 +1726,64 @@ Package pdftex.def Info: figs/vertedouro.png used on input line 89.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [9 <./figs/tab_solos.png>] [10 <./figs/vertedouro.png>]
-<figs/tab_conduto.png, id=129, 537.00626pt x 131.49126pt>
+<figs/tab_conduto.png, id=131, 537.00626pt x 131.49126pt>
 File: figs/tab_conduto.png Graphic file (type png)
 
 <use figs/tab_conduto.png>
-Package pdftex.def Info: figs/tab_conduto.png used on input line 131.
+Package pdftex.def Info: figs/tab_conduto.png used on input line 130.
 (pdftex.def)             Requested size: 273.00278pt x 66.84697pt.
  [11 <./figs/tab_conduto.png>] [12]
-<figs/tab_ger.png, id=149, 506.89375pt x 189.70876pt>
+
+LaTeX Warning: Command \c invalid in math mode on input line 161.
+
+
+LaTeX Warning: Command \~ invalid in math mode on input line 161.
+
+
+LaTeX Warning: Command \' invalid in math mode on input line 161.
+
+
+LaTeX Warning: Command \' invalid in math mode on input line 163.
+
+
+LaTeX Warning: Command \' invalid in math mode on input line 165.
+
+<figs/tab_ger.png, id=151, 506.89375pt x 189.70876pt>
 File: figs/tab_ger.png Graphic file (type png)
  <use figs/tab_ger.png>
-Package pdftex.def Info: figs/tab_ger.png used on input line 174.
+Package pdftex.def Info: figs/tab_ger.png used on input line 179.
 (pdftex.def)             Requested size: 273.00278pt x 102.17488pt.
 
-[13 <./figs/tab_ger.png>]
 
-LaTeX Warning: Command \' invalid in math mode on input line 185.
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<figs/sincrona.png, id=153, 378.41376pt x 359.3425pt>
+File: figs/sincrona.png Graphic file (type png)
+ <use figs/sincrona.png>
+Package pdftex.def Info: figs/sincrona.png used on input line 189.
+(pdftex.def)             Requested size: 273.00278pt x 259.24728pt.
+
+[13] [14 <./figs/tab_ger.png> <./figs/sincrona.png>]
+
+LaTeX Warning: Command \' invalid in math mode on input line 199.
 
 
-LaTeX Warning: Command \' invalid in math mode on input line 192.
+LaTeX Warning: Command \' invalid in math mode on input line 206.
 
 
-LaTeX Warning: Command \^ invalid in math mode on input line 192.
+LaTeX Warning: Command \^ invalid in math mode on input line 206.
 
-[14] <figs/custom.png, id=167, 516.93124pt x 661.47125pt>
+[15] <figs/custom.png, id=177, 516.93124pt x 661.47125pt>
 File: figs/custom.png Graphic file (type png)
 
 <use figs/custom.png>
-Package pdftex.def Info: figs/custom.png used on input line 199.
+Package pdftex.def Info: figs/custom.png used on input line 213.
 (pdftex.def)             Requested size: 273.00278pt x 349.34673pt.
- [15
+ [16
 
- <./figs/custom.png>] [16
+ <./figs/custom.png>] [17
 
-]) [17
+]) [18
 
 ]
 \openout2 = `postextual/referencias.aux'.
@@ -1777,10 +1801,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 14--15
  C3 % A9cnico _ Eun % C3 % A1polis _
  []
 
-[18
+[19
 
 
-] [19] <figs/cronos.png, id=208, 1452.42625pt x 596.2275pt>
+] [20] <figs/cronos.png, id=218, 1452.42625pt x 596.2275pt>
 File: figs/cronos.png Graphic file (type png)
 
 <use figs/cronos.png>
@@ -1791,7 +1815,7 @@ Overfull \hbox (20.00278pt too wide) in paragraph at lines 42--43
  [][] 
  []
 
-[20
+[21
 
  <./figs/cronos.png>]) 
 AED: lastpage setting LastPage
@@ -1812,11 +1836,11 @@ Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 172.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 172.
  ) 
 Here is how much of TeX's memory you used:
- 22305 strings out of 493029
- 335691 string characters out of 6136235
- 670413 words of memory out of 5000000
- 25176 multiletter control sequences out of 15000+600000
- 70119 words of font info for 104 fonts, out of 8000000 for 9000
+ 22324 strings out of 493029
+ 335951 string characters out of 6136235
+ 670584 words of memory out of 5000000
+ 25182 multiletter control sequences out of 15000+600000
+ 70475 words of font info for 108 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  51i,13n,80p,1949b,468s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/en
@@ -1831,10 +1855,10 @@ ublic/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmss12.pfb></usr/share/texmf/fonts/type1/public/l
 m/lmss17.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share/t
 exmf/fonts/type1/public/lm/lmsy10.pfb>
-Output written on main.pdf (22 pages, 6657348 bytes).
+Output written on main.pdf (23 pages, 6674654 bytes).
 PDF statistics:
- 397 PDF objects out of 1000 (max. 8388607)
- 344 compressed objects within 4 object streams
- 83 named destinations out of 1000 (max. 500000)
- 20845 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 411 PDF objects out of 1000 (max. 8388607)
+ 356 compressed objects within 4 object streams
+ 87 named destinations out of 1000 (max. 500000)
+ 20858 words of extra memory for PDF output out of 24883 (max. 10000000)
 
